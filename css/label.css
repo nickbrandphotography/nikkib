@@ -1,0 +1,29 @@
+/* THE LABEL */
+.l-hero{padding-top:9rem;padding-bottom:3rem}
+.l-title{font:300 clamp(3.2rem,9vw,8.6rem)/.98 var(--serif);letter-spacing:-.02em;margin:.4rem 0 1.8rem}
+.l-title .script{font-size:1.3em;line-height:1;display:inline-block;padding:.05em .1em .1em 0}
+.l-split{display:grid;grid-template-columns:.95fr 1.05fr;gap:clamp(2rem,6vw,6rem);align-items:center;padding-block:clamp(3rem,6vw,5rem)}
+.l-img{overflow:hidden;border-radius:30px;box-shadow:0 50px 90px -45px rgba(30,10,40,.55)}
+.l-img img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:32% 40%}
+.l-copy .h2{margin-bottom:1.6rem}
+.l-copy p{margin-bottom:1.3rem;max-width:34rem;color:#3f3b36}
+.l-spec{background:var(--bg2);padding:clamp(4rem,8vw,7rem) 0;margin-top:clamp(3rem,6vw,5rem)}
+.spec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(1.2rem,3vw,3rem)}
+.spec-grid div{border-top:1px solid #c9c2b4;padding-top:1.3rem}
+.spec-grid b{display:block;font:300 clamp(2.6rem,5vw,4.6rem)/1 var(--serif);background:var(--gradt);-webkit-background-clip:text;background-clip:text;color:transparent}
+.spec-grid span{display:block;font:400 .72rem var(--sans);letter-spacing:.26em;text-transform:uppercase;margin:.4rem 0 .8rem}
+.spec-grid p{font-size:.92rem;color:#4a4640}
+.l-credit{padding-block:2.5rem 1rem;max-width:46rem}
+.l-contact{padding:clamp(4rem,8vw,7rem) 0 clamp(5rem,9vw,8rem)}
+.l-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,6vw,6rem);align-items:start}
+.l-grid .h2{margin-bottom:1.2rem}
+.l-grid p{margin-bottom:1rem;color:#3f3b36}
+.big-mail a{font:300 clamp(1.5rem,3vw,2.4rem)/1.2 var(--serif);text-decoration:none;border-bottom:1px solid var(--ink);transition:color .3s,border-color .3s;word-break:break-word}
+.big-mail a:hover{color:var(--d1);border-color:var(--d1)}
+.l-form{display:grid;gap:1.3rem;background:#fff;padding:clamp(1.4rem,3vw,2.4rem);border-radius:26px;box-shadow:0 36px 70px -45px rgba(30,10,40,.5)}
+.l-form label{display:grid;gap:.35rem;font:400 .7rem var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
+.l-form input,.l-form textarea{font:300 1.05rem var(--sans);letter-spacing:0;text-transform:none;color:var(--ink);border:0;border-bottom:1px solid #cfc8bb;padding:.55rem 0;background:none;outline:none;resize:vertical;transition:border-color .3s}
+.l-form input:focus,.l-form textarea:focus{border-color:var(--c1)}
+.l-form .btn{justify-self:start}
+@media (max-width:900px){.l-split,.l-grid{grid-template-columns:1fr}.spec-grid{grid-template-columns:1fr 1fr}.l-img{max-width:520px}}
+@media (max-width:520px){.spec-grid{grid-template-columns:1fr}}

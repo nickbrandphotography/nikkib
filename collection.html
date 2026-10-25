@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The collection — nikkib</title>
+<meta name="description" content="All 24 nikkib sarongs and scarves: see each piece on her, flat, and in the place it was photographed. 100% Modal, 100 × 200 cm.">
+<meta property="og:title" content="The collection — nikkib">
+<meta property="og:description" content="All 24 nikkib sarongs and scarves: see each piece on her, flat, and in the place it was photographed. 100% Modal, 100 × 200 cm.">
+<meta property="og:image" content="https://www.nikkibfashion.com/img/brand/hero.jpg">
+<meta property="og:url" content="https://www.nikkibfashion.com/collection">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="nikkib">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://www.nikkibfashion.com/collection">
+<meta name="theme-color" content="#faf7f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&family=Mrs+Saint+Delafield&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/collection.css">
+<style>[hidden]{display:none!important}</style>
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<div class="curtain start" id="curtain" aria-hidden="true"><img src="img/brand/nikkib-black.png" alt=""></div>
+<div class="cursor" id="cursor" aria-hidden="true"><span></span></div>
+<header class="nav" id="nav">
+  <a class="logo" href="index.html" aria-label="nikkib — home"><img src="img/brand/nikkib-black.png" alt="nikkib"></a>
+  <nav class="links" id="links" aria-label="Main"><a href="index.html">Home</a><a href="collection.html" aria-current="page">Collection</a><a href="atlas.html">Atlas</a><a href="label.html">The Label</a></nav>
+  <button class="bag-btn" aria-label="Open your bag"><b id="bagCount">0</b></button>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i></button>
+</header>
+
+<main id="top">
+<section class="c-top wrap">
+  <p class="kicker rv">The collection</p>
+  <h1 class="h2 rv">Twenty-four <em>pieces.</em><br>Twenty-four places.</h1>
+  <div class="c-tools rv">
+    <div class="seg" id="modeSeg" role="group" aria-label="View"><button class="on" data-m="explore">Explorer</button><button data-m="grid">Grid</button></div>
+    <div class="seg" id="famSeg" role="group" aria-label="Colour"><button class="on" data-f="all">All colours</button><button data-f="warm"><i style="background:#e8742a"></i>Warm</button><button data-f="cool"><i style="background:#2f8fb8"></i>Cool</button><button data-f="neutral"><i style="background:#8a8a86"></i>Black &amp; white</button></div>
+    <label class="sel"><span class="small">Place</span><select id="regSel"></select></label>
+    <p class="small" id="countTxt"></p>
+  </div>
+</section>
+
+<section class="explorer" id="explorer">
+  <canvas class="silk" id="silk" aria-hidden="true"></canvas>
+  <div class="wrap ex-grid">
+    <div class="ex-stage" id="stage" aria-live="polite">
+      <figure class="tp" data-k="model"><img id="imgModel" alt=""><figcaption>On her</figcaption></figure>
+      <figure class="tp" data-k="place"><img id="imgPlace" alt=""><figcaption>The place</figcaption></figure>
+      <figure class="tp" data-k="scarf"><img id="imgScarf" alt=""><figcaption>Flat</figcaption></figure>
+    </div>
+    <div class="ex-info" id="info">
+      <p class="ex-idx" id="idx"></p>
+      <h2 class="ex-name" id="exName"></h2>
+      <p class="ex-loc" id="exLoc"></p>
+      <p class="ex-story" id="exStory"></p>
+      <p class="ex-credit small" id="exCredit"></p>
+      <ul class="specs"><li>100% Modal</li><li>100 × 200 cm</li><li>Hand wash</li></ul>
+      <p class="ex-price">AUD $120</p>
+      <div class="ex-actions">
+        <button class="btn solid" id="exAdd" data-add=""><span>Add to bag · AUD $120</span></button>
+        <a class="btn ghost" id="exEnq" href="#"><span>Ask a question</span></a>
+        <div class="pn"><button id="prev" aria-label="Previous piece">←</button><button id="next" aria-label="Next piece">→</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="wrap"><div class="strip" id="strip" role="listbox" aria-label="All pieces"></div></div>
+  <p class="wrap small hint">Use the ← → keys or swipe. Tap a picture to enlarge it.</p>
+</section>
+
+<section class="grid-view" id="gridView" hidden>
+  <div class="wrap"><div class="g-grid" id="grid"></div></div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><img src="img/brand/nikkib-white.png" alt="nikkib"><p>Sarongs and scarves printed with photographs of real places. Wrap your body in art.</p></div>
+      <div><h4>Explore</h4><a href="collection.html">The collection</a><a href="atlas.html">Where it was taken</a><a href="label.html">The label</a><a href="label.html#contact">Contact</a></div>
+      <div><h4>Say hello</h4><a href="mailto:live@nikkibfashion.com">live@nikkibfashion.com</a><a href="https://nikkibfashion.com" target="_blank" rel="noopener">nikkibfashion.com</a><p style="margin-top:1rem">100% Modal · 100 × 200 cm<br>AUD $120 each · hand wash</p></div>
+    </div>
+    <div class="fine"><span>© nikkib. Photography and design by Nick Brand. All images © Nick Brand.</span><span>Prices in Australian dollars.</span></div>
+  </div>
+</footer>
+<script src="data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/silk.js"></script>
+<script src="js/collection.js"></script>
+</body>
+</html>
