@@ -1,10 +1,14 @@
 // Creates a Stripe Checkout session for the items in the bag.
 // Prices and product names come from api/_catalog.js (written by the site generator), never from the browser.
 const { PRICE_CENTS, CURRENCY, pieces } = require('./_catalog');
+const shipping = require('../shipping.json');
 
 const MAX_QTY = 5;
-const countries = (process.env.SHIPPING_COUNTRIES || 'AU').split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
-const rates = (process.env.STRIPE_SHIPPING_RATES || '').split(',').map(s => s.trim()).filter(Boolean);
+
+// Delivery price comes from shipping.json: the customer's country picks a zone, the zone has a price.
+function zoneFor(code) {
+  return shipping.zones.find(z => z.countries.includes(code)) || shipping.zones.find(z => z.countries.includes('*'));
+}
 
 function siteOrigin(req) {
   if (process.env.SITE_URL) return process.env.SITE_URL.replace(/\/$/, '');
@@ -30,13 +34,24 @@ module.exports = async (req, res) => {
   }
   if (!lines.length) return res.status(400).json({ error: 'empty' });
 
+  const country = String((body && body.country) || '').toUpperCase();
+  if (!shipping.countries[country]) return res.status(400).json({ error: 'bad_country' });
+  const zone = zoneFor(country);
+  if (!zone || typeof zone.amount !== 'number' || !(zone.amount >= 0)) {
+    return res.status(422).json({ error: 'shipping_unavailable', country: shipping.countries[country] });
+  }
+
   const origin = siteOrigin(req), p = new URLSearchParams();
   p.set('mode', 'payment'); p.set('locale', 'en-AU');
   p.set('billing_address_collection', 'auto');
   p.set('phone_number_collection[enabled]', 'true');
   p.set('allow_promotion_codes', 'true');
-  countries.forEach((c, i) => p.set(`shipping_address_collection[allowed_countries][${i}]`, c));
-  rates.forEach((r, i) => p.set(`shipping_options[${i}][shipping_rate]`, r));
+  // only the chosen country is allowed, so the address always matches the delivery price
+  p.set('shipping_address_collection[allowed_countries][0]', country);
+  p.set('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
+  p.set('shipping_options[0][shipping_rate_data][display_name]', zone.label);
+  p.set('shipping_options[0][shipping_rate_data][fixed_amount][amount]', String(Math.round(zone.amount * 100)));
+  p.set('shipping_options[0][shipping_rate_data][fixed_amount][currency]', shipping.currency || CURRENCY);
   lines.forEach((l, i) => {
     const pc = pieces[l.id], b = `line_items[${i}]`;
     p.set(`${b}[quantity]`, String(l.qty));
@@ -50,6 +65,7 @@ module.exports = async (req, res) => {
   p.set('success_url', `${origin}/thanks.html?session_id={CHECKOUT_SESSION_ID}`);
   p.set('cancel_url', `${origin}/collection.html`);
   p.set('metadata[source]', 'nikkibfashion.com');
+  p.set('metadata[ship_zone]', zone.id);
 
   try {
     const r = await fetch('https://api.stripe.com/v1/checkout/sessions', {

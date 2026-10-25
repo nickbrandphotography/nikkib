@@ -101,9 +101,19 @@ const scrim = document.createElement('div'); scrim.className = 'scrim';
 const toastEl = document.createElement('div'); toastEl.className = 'toast'; toastEl.setAttribute('role', 'status');
 document.body.append(scrim, drawer, toastEl);
 
+/* delivery: the customer's country picks a zone in shipping.json, the zone has a price */
+let SHIP = null, shipTo = 'AU';
+try { shipTo = localStorage.getItem('nikkib-ship-to') || ''; } catch (e) { shipTo = ''; }
+if (!shipTo) { const m = (navigator.language || '').match(/-([A-Za-z]{2})$/); shipTo = m ? m[1].toUpperCase() : 'AU'; }
+fetch('shipping.json').then(r => r.json()).then(j => { SHIP = j; if (!SHIP.countries[shipTo]) shipTo = 'AU'; renderDrawer(); }).catch(() => {});
+const zoneFor = c => SHIP && (SHIP.zones.find(z => z.countries.includes(c)) || SHIP.zones.find(z => z.countries.includes('*')));
+const shipCost = () => { const z = zoneFor(shipTo); return z && typeof z.amount === 'number' && z.amount >= 0 ? z.amount : null; };
+const money = n => '$' + (Number.isInteger(n) ? n : n.toFixed(2));
+
 function enquiryHref() {
   const lines = bag.map(i => `- ${byId[i.id].name} x ${i.qty} (${byId[i.id].location}), AUD $${PRICE * i.qty}`);
-  const body = `Hello nikkib,\n\nI'd like to order:\n${lines.join('\n')}\n\nTotal: AUD $${count() * PRICE}\n\nMy name:\nMy address:`;
+  const where = SHIP ? SHIP.countries[shipTo] : '';
+  const body = `Hello nikkib,\n\nI'd like to order:\n${lines.join('\n')}\n\nSubtotal: AUD $${count() * PRICE}\nPlease send me the delivery price to: ${where}\n\nMy name:\nMy address:`;
   return `mailto:${EMAIL}?subject=${encodeURIComponent('Order — nikkib')}&body=${encodeURIComponent(body)}`;
 }
 function renderDrawer(note) {
@@ -115,8 +125,11 @@ function renderDrawer(note) {
         <div class="dr-price">AUD $${PRICE * i.qty}<button data-rm="${p.id}">Remove</button></div></div>`; }).join('')
       : '<p class="dr-empty">Your bag is empty.<br>Choose a piece and tap the bag icon.</p>'}</div>
     <div class="dr-foot">
-      ${bag.length ? `<div class="dr-total"><span>${count()} ${count() === 1 ? 'piece' : 'pieces'}</span><span>AUD $${count() * PRICE}</span></div>
-      <button class="btn solid" data-checkout><span>Checkout</span></button>
+      ${bag.length ? `${SHIP ? `<label class="ship"><span>Deliver to</span><select id="shipTo">${Object.entries(SHIP.countries).map(([c, n]) => `<option value="${c}"${c === shipTo ? ' selected' : ''}>${esc(n)}</option>`).join('')}</select></label>` : ''}
+      <div class="dr-line"><span>${count()} ${count() === 1 ? 'piece' : 'pieces'}</span><span>AUD $${count() * PRICE}</span></div>
+      <div class="dr-line"><span>Delivery</span><span>${!SHIP ? '…' : shipCost() === null ? 'To be confirmed' : shipCost() === 0 ? 'Free' : 'AUD ' + money(shipCost())}</span></div>
+      <div class="dr-total"><span>Total</span><span>${shipCost() === null ? 'AUD $' + count() * PRICE + ' + delivery' : 'AUD ' + money(count() * PRICE + shipCost())}</span></div>
+      <button class="btn solid" data-checkout><span>${!SHIP || shipCost() !== null ? 'Checkout' : 'Order by email'}</span></button>
       <p class="dr-note" id="drNote">${note || 'Delivery address and payment are entered securely on the next page, powered by Stripe.'}</p>
       <a class="small" href="${enquiryHref()}">Prefer to order by email?</a>` : '<a class="btn" href="collection.html"><span>Browse the collection</span></a>'}
     </div>`;
@@ -146,13 +159,17 @@ const open = () => { renderDrawer(); drawer.classList.add('on'); scrim.classList
 const close = () => { drawer.classList.remove('on'); scrim.classList.remove('on'); drawer.setAttribute('aria-hidden', 'true'); };
 
 async function checkout(btn) {
-  const label = $('span', btn); btn.disabled = true; label.textContent = 'Preparing checkout…';
+  const label = $('span', btn);
+  if (SHIP && shipCost() === null) { location.href = enquiryHref(); return; }   // no delivery price for this country yet: order by email
+  btn.disabled = true; label.textContent = 'Preparing checkout…';
   let msg = '';
   try {
-    const r = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: bag }) });
+    const r = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: bag, country: shipTo }) });
     const d = await r.json().catch(() => ({}));
     if (r.ok && d.url) { location.href = d.url; return; }
-    msg = r.status === 503 ? 'Online checkout is being switched on. For now you can order by email below.' : 'Sorry, checkout could not start. Please try again, or order by email below.';
+    msg = r.status === 503 ? 'Online checkout is being switched on. For now you can order by email below.'
+      : r.status === 422 ? `We are still confirming delivery to ${d.country || 'that country'}. Please order by email below and we will send the price.`
+      : 'Sorry, checkout could not start. Please try again, or order by email below.';
   } catch (e) { msg = 'Sorry, we could not reach the checkout. Please check your connection, or order by email below.'; }
   btn.disabled = false; label.textContent = 'Checkout';
   const n = $('#drNote'); if (n) { n.textContent = msg; n.classList.add('err'); }
@@ -167,6 +184,7 @@ document.addEventListener('click', e => {
   const co = e.target.closest('[data-checkout]'); if (co) checkout(co);
 }, true);
 addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+document.addEventListener('change', e => { if (e.target.id === 'shipTo') { shipTo = e.target.value; try { localStorage.setItem('nikkib-ship-to', shipTo); } catch (x) { /* ignore */ } renderDrawer(); const sel = $('#shipTo'); if (sel) sel.focus(); } });
 renderDrawer(); syncBag();
 
 /* ---------- palette helpers (colour that follows the pieces) ---------- */

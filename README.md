@@ -13,7 +13,10 @@ Edit `pieces.json` (stories and locations) or the `PRICE` line at the top of `to
 Set these in Vercel > Project > Settings > Environment Variables (see `.env.example`):
 - `STRIPE_SECRET_KEY` — your Stripe secret key (start with a `sk_test_` key to try it, then switch to `sk_live_`)
 - `SITE_URL` — `https://www.nikkibfashion.com`
-- `SHIPPING_COUNTRIES` — optional, default `AU` (comma-separated country codes)
-- `STRIPE_SHIPPING_RATES` — optional, comma-separated Stripe shipping rate IDs (`shr_...`) created in the Stripe dashboard
 
 Prices are set on the server (`api/_catalog.js`, written by the build script), never by the browser.
+
+## Delivery prices (worldwide)
+Edit `shipping.json`. The customer picks their country in the bag; the country belongs to a zone; each zone has an `amount` in Australian dollars for the whole order (`18`, `24.5`, or `0` for free).
+While a zone's `amount` is `null`, customers there see "To be confirmed" and are offered to order by email instead, so nothing is ever sold without a delivery price.
+To move a country to another zone, move its code between the zones' `countries` lists. The last zone (`"*"`) catches every country not listed.
